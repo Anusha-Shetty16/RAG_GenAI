@@ -12,17 +12,16 @@ from langchain_core.tools import tool
 import os
 from dotenv import load_dotenv
 
+from prompt import PROMPT
+
 load_dotenv()
 
 def answer_query(question,file):
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     vector_store = FAISS.load_local(f"embeddings/{file}", embeddings)
     retriever = vector_store.as_retriever()
-    llm = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest", temperature=0.7)
-    prompt_template = """
-    {context}
-    {question}
-    """
+    llm = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0.7)
+    prompt_template = PROMPT
 
     prompt = PromptTemplate(template=prompt_template, input_variables=["context","question"])
     chain_type_kwargs = {"prompt":prompt}
